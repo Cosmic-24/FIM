@@ -1,0 +1,22 @@
+import subprocess
+import PySimpleGUI as sg
+
+layout = [[sg.Text('Choose an option:')],
+          [sg.Radio('Get Baseline', "RADIO1", default=True, key='baseline'),
+           sg.Radio('Monitor Files', "RADIO1", key='monitor')],
+          [sg.OK(), sg.Cancel()]]
+
+window = sg.Window('File Integrity Monitor', layout)
+
+while True:
+    event, values = window.read()
+    if event in (sg.WIN_CLOSED, 'Cancel'):
+        break
+    elif values['baseline']:
+        subprocess.run(["powershell", "-Command", "& {Cal_File_Hash('D:\\OM\\Cosmic\\Project files\\FIM\\TEST'); exit}"])
+        sg.popup('Baseline saved!', title='Success')
+    elif values['monitor']:
+        subprocess.run(["powershell", "-Command", "& {'D:\\OM\\Cosmic\\Project files\\FIM\\Baseline\\Baseline.txt'; exit}"])
+        sg.popup('Monitoring files...', title='Success')
+
+window.close()

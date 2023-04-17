@@ -1,0 +1,48 @@
+Add-Type -AssemblyName System.Windows.Forms
+
+function Show-FileIntegrityMonitorGUI {
+    $form = New-Object System.Windows.Forms.Form
+    $form.Text = "File Integrity Monitor"
+    $form.Width = 500
+    $form.Height = 300
+
+    # Add controls to the form
+    $btnBaseline = New-Object System.Windows.Forms.Button
+    $btnBaseline.Location = New-Object System.Drawing.Point(20, 20)
+    $btnBaseline.Size = New-Object System.Drawing.Size(120, 30)
+    $btnBaseline.Text = "Get Baseline"
+    $btnBaseline.Add_Click({ Get-Baseline })
+
+    $btnMonitor = New-Object System.Windows.Forms.Button
+    $btnMonitor.Location = New-Object System.Drawing.Point(150, 20)
+    $btnMonitor.Size = New-Object System.Drawing.Size(120, 30)
+    $btnMonitor.Text = "Monitor Files"
+    $btnMonitor.Add_Click({ Start-Monitoring })
+
+    $txtOutput = New-Object System.Windows.Forms.TextBox
+    $txtOutput.Multiline = $true
+    $txtOutput.ScrollBars = "Vertical"
+    $txtOutput.Location = New-Object System.Drawing.Point(20, 60)
+    $txtOutput.Size = New-Object System.Drawing.Size(460, 200)
+
+    # Add controls to the form
+    $form.Controls.Add($btnBaseline)
+    $form.Controls.Add($btnMonitor)
+    $form.Controls.Add($txtOutput)
+
+    # Define the functions for the event handlers
+    function Get-Baseline {
+        $output = &"C:\Path\To\Your\PowerShell\Script.ps1" -GetBaseline
+        $txtOutput.AppendText("`n$output")
+    }
+
+    function Start-Monitoring {
+        $output = &"C:\Path\To\Your\PowerShell\Script.ps1" -StartMonitoring
+        $txtOutput.AppendText("`n$output")
+    }
+
+    # Show the form
+    $form.ShowDialog() | Out-Null
+}
+
+Show-FileIntegrityMonitorGUI

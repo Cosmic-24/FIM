@@ -1,0 +1,91 @@
+import os
+import hashlib
+import time
+
+# Function to calculate file hash of files
+def cal_file_hash(filepath):
+    with open(filepath, 'rb') as f:
+        filehash = hashlib.md5()
+        while chunk := f.read(4096):
+            filehash.update(chunk)
+    return filehash.hexdigest()
+
+# Folder in which files are to be monitored
+folder = r"D:\OM\Cosmic\Project files\FIM\TEST"
+
+# Baseline file location
+baseline = r"D:\OM\Cosmic\Project files\FIM\Baseline\Baseline.txt"
+
+# Dictionary to store hash from baseline while monitoring
+hashbase = {}
+
+# Display
+print("\n\n__________FILE INTEGRITY MONITOR__________")
+print("1] Get Baseline")
+print("2] Monitor Files")
+response = input("---> ")
+
+# Logic Getting Baseline
+if response == '1':
+    time.sleep(1)
+    print("Getting Baseline.....")
+    with open(baseline, 'w') as f:
+        for root, dirs, files in os.walk(folder):
+            for filename in files:
+                filepath = os.path.join(root, filename)
+                hash_val = cal_file_hash(filepath)
+                f.write(f"{filepath}|{hash_val}\n")
+                time.sleep(1)
+                print(".", end="", flush=True)
+    time.sleep(1)
+    print("\nBaseline Saved!!")
+
+# Logic Monitoring
+elif response == '2':
+    # Getting baseline start
+    with open(baseline, 'r') as f:
+        temphash = f.readlines()
+    time.sleep(1)
+    print("\nGetting Baseline.....")
+    for line in temphash:
+        path, hash_val = line.strip().split("|")
+        hashbase[path] = hash_val
+
+    # Getting baseline end
+    # Monitoring start
+    time.sleep(1)
+    print("\nMonitoring Files.....")
+    while True:
+        mfiles = []
+        for root, dirs, files in os.walk(folder):
+            for filename in files:
+                mfiles.append(os.path.join(root, filename))
+
+        for filepath in mfiles:
+            try:
+                mhash = cal_file_hash(filepath)
+
+                # If files are not altered
+                if hashbase[filepath] == mhash:
+                    time.sleep(1)
+                # If new file was created
+                elif hashbase.get(filepath) is None:
+                    print(f"{filepath} File was Created!!")
+                    hashbase[filepath] = mhash
+                    time.sleep(1)
+                # If files are altered
+                else:
+                    print(f"{filepath} File was Altered!!!")
+                    hashbase[filepath] = mhash
+                    time.sleep(1)
+            except Exception as e:
+                print(f"Error occurred while checking file {filepath}: {e}")
+
+        # Exception for deleted files
+        for filepath in list(hashbase.keys()):
+            if not os.path.exists(filepath):
+                print(f"{filepath} File was deleted!!")
+                hashbase.pop(filepath)
+        time.sleep(5)
+
+    # Monitoring end
