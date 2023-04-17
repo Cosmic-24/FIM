@@ -9,5 +9,6 @@ This fim works by comparing self generated data i.e hashes.The hash of all the  
 The Base code consists of a cli version of the fim that is written in powershell that requires you to select folder to monitor and give a type of hash.
 Along with this code i have added multiple addons that can be used to generate GUI for the same.
 I have also added a python version of the script so that it can be used on other os such as ubuntu/kali.
+I have also attached some research papers that can used as references for developing your awn fim.
 
 Please note that this is something I developed as a student so the scope and use of this tools is limited, the purpose of this project is to  demonstrates my skills and expertise in software development and information security.
